@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Editar Propiedad</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container mt-4">
+    <h2 th:text="${formBean.id == null ? 'Nueva Propiedad' : 'Editar Propiedad'}"></h2>
+
+    <form th:action="@{/propiedadesEditar}" method="post" th:object="${formBean}">
+
+        <!-- ID (solo lectura si es edición) -->
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="mb-3">
+            <label class="form-label">ID</label>
+            <input type="text" class="form-control" th:value="${formBean.id == null ? 'Se asignará automáticamente' : formBean.id}" readonly/>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Dirección *</label>
+            <input type="text" class="form-control" th:field="*{direccion}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ciudad *</label>
+            <input type="text" class="form-control" th:field="*{ciudad}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('ciudad')}" th:errors="*{ciudad}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tipo de Propiedad *</label>
+            <select class="form-select" th:field="*{tipo}">
+                <option value="">-- Seleccionar --</option>
+                <option th:each="t : ${allTipos}" th:value="${t}" th:text="${t}"></option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Cantidad de Ambientes *</label>
+            <input type="number" class="form-control" th:field="*{cantidadAmbientes}" min="1"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('cantidadAmbientes')}" th:errors="*{cantidadAmbientes}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Metros Cuadrados *</label>
+            <input type="number" step="0.01" class="form-control" th:field="*{metrosCuadrados}" min="0.01"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('metrosCuadrados')}" th:errors="*{metrosCuadrados}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Descripción *</label>
+            <textarea class="form-control" th:field="*{descripcion}" rows="3"></textarea>
+            <span class="text-danger" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Estado de Disponibilidad *</label>
+            <select class="form-select" th:field="*{estadoDisponibilidad}">
+                <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('estadoDisponibilidad')}" th:errors="*{estadoDisponibilidad}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Propietario *</label>
+            <select class="form-select" th:field="*{idPropietario}">
+                <option value="">-- Seleccionar propietario --</option>
+                <option th:each="persona : ${allPropietarios}"
+                        th:value="${persona.id}"
+                        th:text="${persona.nombre + ' ' + persona.apellido + ' - ' + persona.dniCuit}">
+                </option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('idPropietario')}" th:errors="*{idPropietario}"></span>
+        </div>
+
+        <!-- Errores globales -->
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+        </div>
+
+        <button type="submit" name="action" value="Aceptar" class="btn btn-primary">Guardar</button>
+        <button type="submit" name="action" value="Cancelar" class="btn btn-secondary">Cancelar</button>
+    </form>
+</div>
+</body>
+</html>
