@@ -12,7 +12,7 @@ import tuti.desi.entidades.HistorialEstadoContrato;
 import tuti.desi.entidades.Propiedad;
 import tuti.desi.excepciones.EntidadNoEncontradaException;
 import tuti.desi.excepciones.Excepcion;
-import tuti.desi.presentacion.contratos.ContratosBuscarForm;
+import tuti.desi.presentacion.contrato.ContratosBuscarForm;
 
 @Service
 public class ContratoServiceImpl implements ContratoService {

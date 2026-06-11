@@ -3,7 +3,7 @@ package tuti.desi.servicios;
 import java.util.List;
 import tuti.desi.entidades.Contrato;
 import tuti.desi.excepciones.Excepcion;
-import tuti.desi.presentacion.contratos.ContratosBuscarForm;
+import tuti.desi.presentacion.contrato.ContratosBuscarForm;
 
 public interface ContratoService {
     List<Contrato> getAll();
