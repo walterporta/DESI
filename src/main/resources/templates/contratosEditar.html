@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Editar Contrato</title>
+    <link class="bootstrap-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container mt-4">
+    <h2 th:text="${formBean.id == null ? 'Registrar Contrato' : 'Editar Contrato'}"></h2>
+
+    <form th:action="@{/contratosEditar}" method="post" th:object="${formBean}">
+
+        <!-- ID oculto -->
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="mb-3" th:if="${formBean.id != null}">
+            <label class="form-label">ID Contrato</label>
+            <input type="text" class="form-control" th:value="${formBean.id}" readonly/>
+        </div>
+
+        <!-- Selección de Propiedad -->
+        <div class="mb-3">
+            <label class="form-label">Propiedad *</label>
+            <select class="form-select" th:field="*{idPropiedad}">
+                <option value="">-- Seleccionar Propiedad --</option>
+                <option th:each="p : ${allPropiedades}" 
+                        th:value="${p.id}" 
+                        th:text="${p.direccion + ' (' + p.ciudad + ') - Dueño: ' + (p.propietario != null ? p.propietario.nombre + ' ' + p.propietario.apellido : '-')}"></option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('idPropiedad')}" th:errors="*{idPropiedad}"></span>
+        </div>
+
+        <!-- Selección de Inquilino -->
+        <div class="mb-3">
+            <label class="form-label">Inquilino *</label>
+            <select class="form-select" th:field="*{idInquilino}">
+                <option value="">-- Seleccionar Inquilino --</option>
+                <option th:each="i : ${allInquilinos}" 
+                        th:value="${i.id}" 
+                        th:text="${i.nombre + ' ' + i.apellido + ' - DNI: ' + i.dniCuit}"></option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('idInquilino')}" th:errors="*{idInquilino}"></span>
+        </div>
+
+        <!-- Fecha Inicio -->
+        <div class="mb-3">
+            <label class="form-label">Fecha de Inicio *</label>
+            <input type="date" class="form-control" th:field="*{fechaInicio}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('fechaInicio')}" th:errors="*{fechaInicio}"></span>
+        </div>
+
+        <!-- Duración -->
+        <div class="mb-3">
+            <label class="form-label">Duración (meses) *</label>
+            <input type="number" class="form-control" th:field="*{duracionMeses}" min="1"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('duracionMeses')}" th:errors="*{duracionMeses}"></span>
+        </div>
+
+        <!-- Importe Mensual -->
+        <div class="mb-3">
+            <label class="form-label">Importe Mensual *</label>
+            <input type="number" step="0.01" class="form-control" th:field="*{importeMensual}" min="0.01"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('importeMensual')}" th:errors="*{importeMensual}"></span>
+        </div>
+
+        <!-- Día de Vencimiento -->
+        <div class="mb-3">
+            <label class="form-label">Día de Vencimiento Mensual *</label>
+            <input type="number" class="form-control" th:field="*{diaVencimiento}" min="1" max="31"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('diaVencimiento')}" th:errors="*{diaVencimiento}"></span>
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-3">
+            <label class="form-label">Descripción / Términos del Contrato *</label>
+            <textarea class="form-control" th:field="*{descripcion}" rows="4" placeholder="Detalles o condiciones especiales del acuerdo..."></textarea>
+            <span class="text-danger" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></span>
+        </div>
+
+        <!-- Estado del Contrato -->
+        <div class="mb-3">
+            <label class="form-label">Estado *</label>
+            <select class="form-select" th:field="*{estadoContrato}">
+                <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('estadoContrato')}" th:errors="*{estadoContrato}"></span>
+        </div>
+
+        <!-- Errores Globales -->
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger mt-3">
+            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+        </div>
+
+        <!-- Acciones -->
+        <div class="mt-4">
+            <button type="submit" name="action" value="Aceptar" class="btn btn-primary">Guardar</button>
+            <button type="submit" name="action" value="Cancelar" class="btn btn-secondary">Cancelar</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

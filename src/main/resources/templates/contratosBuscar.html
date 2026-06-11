@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Buscar Contratos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Listado de Contratos de Alquiler</h2>
+
+    <!-- Mensaje de error al eliminar -->
+    <div th:if="${errorEliminar}" class="alert alert-danger" th:text="${errorEliminar}"></div>
+
+    <!-- Filtros de Búsqueda -->
+    <form th:action="@{/contratosBuscar}" method="get" th:object="${filterBean}" class="row g-2 mb-4">
+        <div class="col-md-3">
+            <select class="form-select" th:field="*{idPropiedad}">
+                <option value="">-- Propiedad --</option>
+                <option th:each="p : ${allPropiedades}" 
+                        th:value="${p.id}" 
+                        th:text="${p.direccion + ' (' + p.ciudad + ')'}"></option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" th:field="*{idInquilino}">
+                <option value="">-- Inquilino --</option>
+                <option th:each="i : ${allInquilinos}" 
+                        th:value="${i.id}" 
+                        th:text="${i.nombre + ' ' + i.apellido}"></option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" th:field="*{estado}">
+                <option value="">-- Estado --</option>
+                <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="date" class="form-control" th:field="*{fechaInicio}"/>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+    </form>
+
+    <!-- Botón Nuevo Contrato -->
+    <a th:href="@{/contratosEditar}" class="btn btn-success mb-3">+ Nuevo Contrato</a>
+
+    <!-- Tabla de Resultados -->
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Propiedad</th>
+                <th>Propietario</th>
+                <th>Inquilino</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Duración</th>
+                <th>Importe</th>
+                <th>Vencimiento</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="c : ${contratos}">
+                <td th:text="${c.id}"></td>
+                <td th:text="${c.propiedad.direccion + ' (' + c.propiedad.ciudad + ')'}"></td>
+                <td th:text="${c.propiedad.propietario != null ? c.propiedad.propietario.nombre + ' ' + c.propiedad.propietario.apellido : '-'}"></td>
+                <td th:text="${c.inquilino.nombre + ' ' + c.inquilino.apellido}"></td>
+                <td th:text="${c.fechaInicio}"></td>
+                <td th:text="${c.fechaFin}"></td>
+                <td th:text="${c.duracionMeses + ' meses'}"></td>
+                <td th:text="${'$' + c.importeMensual}"></td>
+                <td th:text="${'Día ' + c.diaVencimiento}"></td>
+                <td>
+                    <span class="badge" 
+                          th:classappend="${c.estadoContrato.name() == 'BORRADOR' ? 'bg-secondary' : 
+                                           (c.estadoContrato.name() == 'ACTIVO' ? 'bg-success' : 
+                                           (c.estadoContrato.name() == 'FINALIZADO' ? 'bg-info text-dark' : 'bg-danger'))}"
+                          th:text="${c.estadoContrato}">
+                    </span>
+                </td>
+                <td>
+                    <a th:href="@{/contratosEditar/{id}(id=${c.id})}" class="btn btn-sm btn-warning">Editar</a>
+                    <form th:action="@{/contratosEditar/delete/{id}(id=${c.id})}" method="post" style="display:inline">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('¿Eliminar este contrato?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(contratos)}">
+                <td colspan="11" class="text-center">No se encontraron contratos registrados</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
