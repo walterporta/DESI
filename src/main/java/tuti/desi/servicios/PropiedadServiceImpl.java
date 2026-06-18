@@ -1,13 +1,12 @@
 package tuti.desi.servicios;
-/**
- *
- * @author Nico
- */
+
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tuti.desi.accesoDatos.IContratoRepo;
 import tuti.desi.accesoDatos.IPropiedadRepo;
+import tuti.desi.entidades.EstadoContrato;
 import tuti.desi.entidades.EstadoDisponibilidad;
 import tuti.desi.entidades.HistorialEstadoPropiedad;
 import tuti.desi.entidades.Propiedad;
@@ -21,6 +20,9 @@ public class PropiedadServiceImpl implements PropiedadService {
     @Autowired
     IPropiedadRepo repo;
 
+    @Autowired
+    IContratoRepo contratoRepo;
+
     @Override
     public List<Propiedad> getAll() {
         return repo.findAll();
@@ -28,10 +30,6 @@ public class PropiedadServiceImpl implements PropiedadService {
 
     @Override
     public List<Propiedad> filter(PropiedadesBuscarForm filter) {
-        if (filter.getDireccion() == null && filter.getCiudad() == null
-                && filter.getTipo() == null && filter.getEstado() == null) {
-            return repo.findAll();
-        }
         return repo.filter(filter.getDireccion(), filter.getCiudad(),
                 filter.getTipo(), filter.getEstado());
     }
@@ -51,17 +49,34 @@ public class PropiedadServiceImpl implements PropiedadService {
                 "Ya existe una propiedad activa con esa dirección y ciudad", "direccion");
         }
 
-        // Registrar historial si el estado cambió o es nueva
         boolean esNueva = propiedad.getId() == null;
         boolean estadoCambio = false;
+        EstadoDisponibilidad estadoAnterior = null;
 
         if (!esNueva) {
             Propiedad existente = repo.findById(propiedad.getId())
                     .orElseThrow(() -> new EntidadNoEncontradaException("la propiedad", propiedad.getId()));
-            estadoCambio = !existente.getEstadoDisponibilidad()
-                    .equals(propiedad.getEstadoDisponibilidad());
+            estadoAnterior = existente.getEstadoDisponibilidad();
+            estadoCambio = !estadoAnterior.equals(propiedad.getEstadoDisponibilidad());
         }
 
+        // Validar que no cambie a DISPONIBLE o INACTIVA si tiene contrato activo
+        if (!esNueva && estadoCambio) {
+            EstadoDisponibilidad nuevoEstado = propiedad.getEstadoDisponibilidad();
+            if (nuevoEstado == EstadoDisponibilidad.DISPONIBLE
+                    || nuevoEstado == EstadoDisponibilidad.INACTIVA) {
+                boolean tieneContratoActivo = contratoRepo
+                        .existsByPropiedadIdAndEstadoContratoAndEliminadaFalse(
+                                propiedad.getId(), EstadoContrato.ACTIVO);
+                if (tieneContratoActivo) {
+                    throw new Excepcion(
+                        "No se puede cambiar el estado: la propiedad tiene un contrato activo vigente",
+                        "estadoDisponibilidad");
+                }
+            }
+        }
+
+        // Registrar historial si el estado cambió o es nueva
         if (esNueva || estadoCambio) {
             HistorialEstadoPropiedad historial = new HistorialEstadoPropiedad();
             historial.setPropiedad(propiedad);
@@ -85,13 +100,14 @@ public class PropiedadServiceImpl implements PropiedadService {
                 .orElseThrow(() -> new EntidadNoEncontradaException("la propiedad", id));
 
         // No se puede eliminar si tiene contrato activo vigente
-        // (esto se validará mejor cuando el Epic 3 esté implementado)
-        if (p.getEstadoDisponibilidad() == EstadoDisponibilidad.ALQUILADA) {
+        boolean tieneContratoActivo = contratoRepo
+                .existsByPropiedadIdAndEstadoContratoAndEliminadaFalse(
+                        p.getId(), EstadoContrato.ACTIVO);
+        if (tieneContratoActivo) {
             throw new Excepcion(
                 "No se puede eliminar una propiedad con un contrato activo vigente", null);
         }
 
-        // Eliminación lógica
         p.setEliminada(true);
         repo.save(p);
     }
