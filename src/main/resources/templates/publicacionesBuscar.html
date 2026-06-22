@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Publicaciones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h2, h3 {
+            color: #333;
+        }
+        .filtros-table, .resultado-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+        .filtros-table td {
+            padding: 8px;
+        }
+        .resultado-table th, .resultado-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .resultado-table th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            padding: 6px 12px;
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            color: white;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background-color: #28a745;
+        }
+        .alert-danger {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Gestión de Publicaciones (Epic 2)</h2>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form th:action="@{/publicaciones/buscar}" th:object="${publicacionesBuscarForm}" method="post">
+        <h3>Filtros de Búsqueda</h3>
+        <table class="filtros-table">
+            <tr>
+                <td><label>Propiedad (Dirección):</label></td>
+                <td>
+                    <input type="text" th:field="*{propiedad}" placeholder="Ej: San Martín" />
+                </td>
+                <td><label>Ciudad:</label></td>
+                <td>
+                    <input type="text" th:field="*{ciudad}" placeholder="Ej: Córdoba" />
+                </td>
+            </tr>
+            <tr>
+                <td><label>Estado de publicación:</label></td>
+                <td>
+                    <select th:field="*{estado}">
+                        <option value="">-- Todos los Estados --</option>
+                        <option value="ACTIVA">ACTIVA</option>
+                        <option value="PAUSADA">PAUSADA</option>
+                        <option value="FINALIZADA">FINALIZADA</option>
+                    </select>
+                </td>
+                <td><label>Precio Mensual (Rango):</label></td>
+                <td>
+                    <input type="number" th:field="*{precioMinimo}" placeholder="Mín" style="width: 75px;" /> - 
+                    <input type="number" th:field="*{precioMaximo}" placeholder="Máx" style="width: 75px;" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: right;">
+                    <button type="submit" name="search" class="btn">Filtrar Listado</button>
+                    <a th:href="@{/publicaciones/registrar}" class="btn btn-success">Nueva Publicación</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <h3>Resultados del Listado</h3>
+    <table class="resultado-table">
+        <thead>
+            <tr>
+                <th>Identificador</th>
+                <th>Dirección</th>
+                <th>Ciudad</th>
+                <th>Precio Mensual</th>
+                <th>Fecha Publicación</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${#lists.isEmpty(publicaciones)}">
+                <td colspan="7" style="text-align: center; color: #777;">No se encontraron publicaciones vigentes con los criterios ingresados.</td>
+            </tr>
+            <tr th:each="p : ${publicaciones}">
+                <td th:text="${p.id}"></td>
+                <td th:text="${p.propiedad.direccion}"></td>
+                <td th:text="${p.propiedad.ciudad}"></td>
+                <td th:text="${'$ ' + p.precioMensual}"></td>
+                <td th:text="${#temporals.format(p.fechaPublicacion, 'dd/MM/yyyy')}"></td>
+                <td th:text="${p.estado}"></td>
+                <td>
+                    <a th:href="@{/publicaciones/editar/{id}(id=${p.id})}" class="btn" style="background-color: #ffc107; color: black; font-weight: bold;">Modificar</a>
+                    
+                    <a th:href="@{/publicaciones/eliminar/{id}(id=${p.id})}" 
+                       class="btn btn-danger" 
+                       onclick="return confirm('¿Está seguro de que desea eliminar esta publicación?');">Eliminar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        <a th:href="@{/}" class="btn" style="background-color: #6c757d;">Volver al Menú Principal</a>
+    </p>
+
+</body>
+</html>
