@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Editar Factura</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container mt-4">
+    <h2 th:text="${formBean.id == null ? 'Registrar Factura' : 'Editar Factura'}"></h2>
+
+    <form th:action="@{/facturasEditar}" method="post" th:object="${formBean}">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="mb-3" th:if="${formBean.id != null}">
+            <label class="form-label">ID Factura</label>
+            <input type="text" class="form-control" th:value="${formBean.id}" readonly/>
+        </div>
+
+        <div class="mb-3" th:if="${formBean.id == null}">
+            <label class="form-label">Contrato *</label>
+            <select class="form-select" th:field="*{idContrato}">
+                <option value="">-- Seleccionar Contrato Activo --</option>
+                <option th:each="c : ${contratosActivos}"
+                        th:value="${c.id}"
+                        th:text="${'Contrato #' + c.id + ' - ' + c.propiedad.direccion + ' - Inquilino: ' + c.inquilino.nombre + ' ' + c.inquilino.apellido}"></option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('idContrato')}" th:errors="*{idContrato}"></span>
+        </div>
+
+        <div class="mb-3" th:if="${formBean.id != null}">
+            <label class="form-label">Contrato asociado</label>
+            <input type="hidden" th:field="*{idContrato}"/>
+            <input type="text" class="form-control" th:value="${'Contrato #' + formBean.idContrato}" readonly/>
+            <span class="text-danger" th:if="${#fields.hasErrors('idContrato')}" th:errors="*{idContrato}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Concepto *</label>
+            <input type="text" class="form-control" th:field="*{concepto}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('concepto')}" th:errors="*{concepto}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Fecha de emision *</label>
+            <input type="date" class="form-control" th:field="*{fechaEmision}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('fechaEmision')}" th:errors="*{fechaEmision}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Fecha de vencimiento *</label>
+            <input type="date" class="form-control" th:field="*{fechaVencimiento}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('fechaVencimiento')}" th:errors="*{fechaVencimiento}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Importe *</label>
+            <input type="number" step="0.01" min="0.01" class="form-control" th:field="*{importe}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('importe')}" th:errors="*{importe}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Estado *</label>
+            <select class="form-select" th:field="*{estadoFactura}">
+                <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('estadoFactura')}" th:errors="*{estadoFactura}"></span>
+        </div>
+
+        <h4 class="mt-4">Datos de pago</h4>
+
+        <div class="mb-3">
+            <label class="form-label">Fecha de pago</label>
+            <input type="date" class="form-control" th:field="*{fechaPago}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('fechaPago')}" th:errors="*{fechaPago}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Medio de pago</label>
+            <select class="form-select" th:field="*{medioPago}">
+                <option value="">-- Seleccionar Medio --</option>
+                <option th:each="m : ${allMediosPago}" th:value="${m}" th:text="${m}"></option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('medioPago')}" th:errors="*{medioPago}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Importe pagado</label>
+            <input type="number" step="0.01" min="0.01" class="form-control" th:field="*{importePagado}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('importePagado')}" th:errors="*{importePagado}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Interes pagado</label>
+            <input type="number" step="0.01" min="0" class="form-control" th:field="*{interesPagado}"/>
+            <span class="text-danger" th:if="${#fields.hasErrors('interesPagado')}" th:errors="*{interesPagado}"></span>
+        </div>
+
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger mt-3">
+            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" name="action" value="Aceptar" class="btn btn-primary">Guardar</button>
+            <button type="submit" name="action" value="Cancelar" class="btn btn-secondary">Cancelar</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
