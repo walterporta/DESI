@@ -41,7 +41,7 @@ public class Publicacion {
 	private LocalDate fechaPublicacion;
 
 	@NotNull(message = "El estado es obligatorio")
-	@Enumerated(EnumType.STRING) // Guarda el nombre del estado en vez del número por si en el futuro agrega otro
+	@Enumerated(EnumType.STRING) // Guardo el nombre del estado en vez del número por si en el futuro agrega otro
 									// estado al DER.
 	@Column(name = "estado", nullable = false, length = 15)
 	private EstadoPublicacion estado;
@@ -54,7 +54,7 @@ public class Publicacion {
 	private String descripcion;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "publicacion_id") // Crea la clave foránea en la tabla del historial
+	@JoinColumn(name = "publicacion_id") // Creo la clave foránea en la tabla del historial
 	private List<HistorialEstadoPublicacion> historialEstados = new ArrayList<>();
 
 	@ManyToOne(optional = false)

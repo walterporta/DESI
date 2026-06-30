@@ -36,7 +36,6 @@ public class PublicacionForm {
     public String getCondiciones() { return condiciones; }
     public void setCondiciones(String condiciones) { this.condiciones = condiciones; }
 
-    public String get彎escripcion() { return descripcion; } // Corrección menor de codificación
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 

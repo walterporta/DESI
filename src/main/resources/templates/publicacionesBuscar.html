@@ -75,7 +75,7 @@
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-    <form th:action="@{/publicaciones/buscar}" th:object="${publicacionesBuscarForm}" method="post">
+    <form th:action="@{/publicacionesBuscar}" th:object="${publicacionesBuscarForm}" method="post">
         <h3>Filtros de Búsqueda</h3>
         <table class="filtros-table">
             <tr>
@@ -100,13 +100,13 @@
                 </td>
                 <td><label>Precio Mensual (Rango):</label></td>
                 <td>
-                    <input type="number" th:field="*{precioMinimo}" placeholder="Mín" style="width: 75px;" /> - 
-                    <input type="number" th:field="*{precioMaximo}" placeholder="Máx" style="width: 75px;" />
+                    <input type="number" th:field="*{precioMinimo}" placeholder="Mín" style="width: 75px;" step="0.01" /> - 
+                    <input type="number" th:field="*{precioMaximo}" placeholder="Máx" style="width: 75px;" step="0.01" />
                 </td>
             </tr>
             <tr>
                 <td colspan="4" style="text-align: right;">
-                    <button type="submit" name="search" class="btn">Filtrar Listado</button>
+                    <button type="submit" class="btn">Filtrar Listado</button>
                     <a th:href="@{/publicaciones/registrar}" class="btn btn-success">Nueva Publicación</a>
                 </td>
             </tr>

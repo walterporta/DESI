@@ -23,29 +23,29 @@ public class PublicacionesBuscarController {
     }
 
     /**
-     * HU 2.4 - Prepara la pantalla de búsqueda y carga el listado inicial de publicaciones vigentes.
+     * HU 2.4 - Preparo la pantalla de búsqueda y cargo el listado inicial de publicaciones vigentes.
      * Se ejecuta cuando el usuario ingresa a la URL: http://localhost:8080/publicacionesBuscar
      */
     @GetMapping
     public String prepararBusqueda(Model model) {
-        // 1. Enviamos un objeto vacío del formulario para que Thymeleaf mapee los inputs sin fallar (Error 500)
+        // 1. Envio un objeto vacío del formulario para que Thymeleaf mapee los inputs sin fallar (Error 500)
         model.addAttribute("publicacionesBuscarForm", new PublicacionesBuscarForm());
         
-        // 2. Cargamos el listado inicial de las publicaciones vigentes (Opción A)
+        // 2. Cargo el listado inicial de las publicaciones vigentes (Opción A)
         List<Publicacion> publicacionesVigentes = publicacionService.buscarConFiltros(null);
         model.addAttribute("publicaciones", publicacionesVigentes);
         
-        // 3. Retornamos el nombre exacto de tu archivo HTML
+        // 3. Retorno
         return "publicacionesBuscar";
     }
 
     /**
-     * HU 2.4 - Recibe la acción de filtrar desde la interfaz. 
+     * HU 2.4 - Recibo la acción de filtrar desde la interfaz. 
      * Al usar la Opción A, mantiene el listado completo de registros no eliminados.
      */
     @PostMapping
     public String buscar(@ModelAttribute("publicacionesBuscarForm") PublicacionesBuscarForm form, Model model) {
-        // Al pasarle el formulario, nos sigue devolviendo la lista segura sin romper la app por las dependencias eliminadas
+        // Al pasarle el formulario, me sigue devolviendo la lista segura sin romper la app por las dependencias eliminadas
         List<Publicacion> publicacionesVigentes = publicacionService.buscarConFiltros(form);
         model.addAttribute("publicaciones", publicacionesVigentes);
         
