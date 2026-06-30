@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="container mt-4">
-    <h2>Listado de Propiedades</h2>
+    <h2>Listado de Propiedades (Epic 1)</h2>
 
     <!-- Mensaje de error al eliminar -->
     <div th:if="${errorEliminar}" class="alert alert-danger" th:text="${errorEliminar}"></div>
@@ -39,7 +39,7 @@
 
     <!-- Botón nueva propiedad -->
     <a th:href="@{/propiedadesEditar}" class="btn btn-success mb-3">+ Nueva Propiedad</a>
-
+        <a th:href="@{/}" class="btn btn-secondary mb-3">Menu</a>
     <!-- Tabla -->
     <table class="table table-bordered table-hover">
         <thead class="table-dark">
