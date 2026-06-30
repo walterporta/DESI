@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "historiales_de_estado_de_las_publicaciones")
+@Table(name = "historial_estado_publicacion")
 
 public class HistorialEstadoPublicacion {
 
@@ -20,7 +20,7 @@ public class HistorialEstadoPublicacion {
 
 	    @NotNull(message = "La fecha y hora son obligatorias")
 	    @Column(name = "fecha_hora", nullable = false)
-	    private LocalDateTime fechaHora; // LocalDateTime mapea fecha y hora exacta
+	    private LocalDateTime fechaHora; // LocalDateTime me toma la fecha y la hora exacta
 
 	    public HistorialEstadoPublicacion() {}
 
