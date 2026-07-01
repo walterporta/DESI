@@ -1,79 +1,83 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title><span th:text="#{ciudad.buscar.titulo}"></span></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
-</head>
+<head th:replace="~{layout :: header(#{ciudad.buscar.titulo})}"></head>
 <body>
 
-	<div class="starter-template">
-        <h1><span  th:text="#{empresa}" /></h1>
-        <h2>
-            <span th:text="#{ciudad.buscar.titulo}"></span>
-        </h2>
+<div th:replace="~{layout :: navbar}"></div>
+
+<div class="container my-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="fw-bold" th:text="#{ciudad.buscar.titulo}"></h2>
+            <p class="text-muted" th:text="#{empresa}"></p>
+        </div>
     </div>
-    
-	<form  th:action="@{/ciudadesBuscar}" th:object="${formBean}" method="post">
-		<p th:each="err : ${#fields.errors('global')}" th:text="${err}" class="error" />
-		<table border="1" style="align-self: center;">
-	        <tr>
-	            <td><label th:text="#{ciudad.nombre}" /></td>
-	            <td><input type="text" th:field="*{nombre}" /></td>
-	            
-			</tr>
-	        <tr>
-	            <td><label th:text="#{ciudad.provincia}" /></td>
-	            <td>
-			        <select th:field="*{provinciaSeleccionada}">
-					  <option th:value="null" text="Seleccione una opción"></option>
-					  <option th:each="p : ${allProvincias}" 
-					          th:value="${p.id}" 
-					          th:text="${p.nombre}"></option>
-					</select>
-				</td>
-			</tr>
-	  </table>
-	  <table class="botones">
-	      <tr>
-		      <td><button type="submit" name="action" value="actionBuscar" th:text="#{botones.buscar}"/></td>
-		      <td><button type="submit" name="action" value="actionCancelar" th:text="#{botones.cancelar}"/></td>
-		      <td><button type="submit" name="action" value="actionRegistrar" th:text="#{botones.registrar}"/></td>
-	      </tr>
-	   </table>
-	   <table  class="resultados" border="0" style="align-self: center;">
-		    <thead>
-		      <tr>
-		        <th ><label th:text="#{ciudad.nombre}" /></th>
-		        <th ><label th:text="#{ciudad.provincia}" /></th>
-		        <th ></th>
-		        <th ></th>
-		      </tr>
-		    </thead>
-		    <tbody>
-		      <tr th:each="p : ${resultados}">
-				    <td th:text="${{p.nombre}}"></td>
-			        <td th:text="${{p.provincia.nombre}}" ></td>
-			        <td>
-	                    <a th:href="@{/ciudadEditar/{id}(id=${p.id})}" 
-	                    	class="btn btn-primary"
-	                    	th:text="#{links.editar}" >
-	                    </a>
-	                </td>
-	                <td>
-	                    <button type="submit"
-                            th:formaction="@{/ciudadEditar/delete/{id}(id=${p.id})}"
-                            formmethod="post"
-	                    	class="btn btn-primary"
-	                    	th:text="#{links.eliminar}"
-	                    	onclick="return confirm('¿Estás seguro que deseas eliminar esta ciudad?');" 
-	                    	>
-	                    </button>
-	                </td>
-			        
-		      </tr>
-		    </tbody>
-	    </table>
-	</form>
+
+    <!-- Formulario de Búsqueda -->
+    <div class="card p-4 mb-4">
+        <form th:action="@{/ciudadesBuscar}" th:object="${formBean}" method="post">
+            <!-- Mensajes globales -->
+            <div th:each="err : ${#fields.errors('global')}" class="alert alert-danger mb-3" th:text="${err}"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="nombre" class="form-label fw-bold" th:text="#{ciudad.nombre}"></label>
+                    <input type="text" id="nombre" class="form-control" th:field="*{nombre}"/>
+                </div>
+                <div class="col-md-6">
+                    <label for="provinciaSeleccionada" class="form-label fw-bold" th:text="#{ciudad.provincia}"></label>
+                    <select id="provinciaSeleccionada" class="form-select" th:field="*{provinciaSeleccionada}">
+                        <option th:value="null" text="Seleccione una opción"></option>
+                        <option th:each="p : ${allProvincias}" 
+                                th:value="${p.id}" 
+                                th:text="${p.nombre}"></option>
+                    </select>
+                </div>
+                <div class="col-12 d-flex gap-2 justify-content-end mt-4">
+                    <button type="submit" name="action" value="actionBuscar" class="btn btn-primary" th:text="#{botones.buscar}"></button>
+                    <button type="submit" name="action" value="actionCancelar" class="btn btn-secondary" th:text="#{botones.cancelar}"></button>
+                    <button type="submit" name="action" value="actionRegistrar" class="btn btn-success" th:text="#{botones.registrar}"></button>
+                </div>
+            </div>
+            
+            <!-- Resultados -->
+            <div class="table-container mt-4" th:if="${resultados != null}">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th th:text="#{ciudad.nombre}"></th>
+                            <th th:text="#{ciudad.provincia}"></th>
+                            <th class="text-end" style="width: 200px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${resultados}">
+                            <td th:text="${p.nombre}"></td>
+                            <td th:text="${p.provincia.nombre}"></td>
+                            <td class="text-end">
+                                <a th:href="@{/ciudadEditar/{id}(id=${p.id})}" 
+                                   class="btn btn-sm btn-warning me-2" 
+                                   th:text="#{links.editar}">
+                                </a>
+                                <button type="submit"
+                                        th:formaction="@{/ciudadEditar/delete/{id}(id=${p.id})}"
+                                        formmethod="post"
+                                        class="btn btn-sm btn-danger"
+                                        th:text="#{links.eliminar}"
+                                        onclick="return confirm('¿Estás seguro que deseas eliminar esta ciudad?');">
+                                </button>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(resultados)}">
+                            <td colspan="3" class="text-center text-muted">No se encontraron resultados</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{layout :: scripts}"></div>
 </body>
 </html>

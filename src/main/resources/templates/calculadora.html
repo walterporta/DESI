@@ -1,30 +1,62 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Calculadora</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
+<head th:replace="~{layout :: header('HogarYa - Calculadora')}"></head>
 <body>
-	<div class="starter-template">
-        <h1>TUTI</h1>
-        <h2>
-            Calculadora
-        </h2>
+
+<div th:replace="~{layout :: navbar}"></div>
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h2 class="fw-bold mb-3 text-center">Calculadora Aritmética</h2>
+                <p class="text-muted text-center mb-4">Ingrese dos números y seleccione la operación a realizar.</p>
+
+                <form th:action="@{/calculadora}" th:object="${formBean}" method="post">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="a" class="form-label fw-bold">Número A</label>
+                            <input type="number" id="a" class="form-control form-control-lg text-center" th:field="*{a}" placeholder="0" required/>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="b" class="form-label fw-bold">Número B</label>
+                            <input type="number" id="b" class="form-control form-control-lg text-center" th:field="*{b}" placeholder="0" required/>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <button type="submit" name="action" value="sumar" class="btn btn-primary btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-plus-lg me-2"></i> Sumar
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" name="action" value="restar" class="btn btn-secondary btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-dash-lg me-2"></i> Restar
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" name="action" value="multiplicar" class="btn btn-warning text-dark btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-x-lg me-2"></i> Multiplicar
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" name="action" value="dividir" class="btn btn-danger btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-slash-lg me-2"></i> Dividir
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light p-3 text-center mb-2" th:if="*{resultado != null}">
+                        <h4 class="text-muted fw-bold mb-1">Resultado</h4>
+                        <div class="display-6 fw-bold text-success" th:text="*{resultado}"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <form  th:action="@{/calculadora}" th:object="${formBean}" method="post">
-    	
-    	
-    	<input  type="number"  id="id" th:field="*{a}" >+
-    	<input  type="number"  id="id" th:field="*{b}" >
-    	
-    	
-		<button type="submit" name="action" value="sumar">Sumar</button>
-	    <button type="submit" name="action" value="restar">Restar</button>
-	    <button type="submit" name="action" value="multiplicar">Multiplicar</button>
-	    <button type="submit" name="action" value="dividir">Dividir</button>
-		<br>
-    	<label>Resultado:</label>
-    	<span th:text="*{resultado}"></span>
-    </form>
+</div>
+
+<div th:replace="~{layout :: scripts}"></div>
 </body>
-</html>	
+</html>

@@ -1,110 +1,128 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Editar Factura</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-</head>
+<head th:replace="~{layout :: header(${formBean.id == null ? 'Registrar Factura' : 'Editar Factura'})}"></head>
 <body>
-<div class="container mt-4">
-    <h2 th:text="${formBean.id == null ? 'Registrar Factura' : 'Editar Factura'}"></h2>
 
-    <form th:action="@{/facturasEditar}" method="post" th:object="${formBean}">
-        <input type="hidden" th:field="*{id}"/>
+<div th:replace="~{layout :: navbar}"></div>
 
-        <div class="mb-3" th:if="${formBean.id != null}">
-            <label class="form-label">ID Factura</label>
-            <input type="text" class="form-control" th:value="${formBean.id}" readonly/>
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <h2 class="fw-bold mb-3 text-center" th:text="${formBean.id == null ? 'Registrar Factura' : 'Editar Factura'}"></h2>
+                <p class="text-muted text-center mb-4">Complete la información de facturación a continuación.</p>
+
+                <form th:action="@{/facturasEditar}" method="post" th:object="${formBean}">
+                    <!-- Errores Globales -->
+                    <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger mb-3">
+                        <p th:each="err : ${#fields.globalErrors()}" th:text="${err}" class="mb-0"></p>
+                    </div>
+
+                    <input type="hidden" th:field="*{id}"/>
+
+                    <div class="mb-3" th:if="${formBean.id != null}">
+                        <label class="form-label fw-bold">ID Factura</label>
+                        <input type="text" class="form-control text-muted" th:value="${formBean.id}" readonly/>
+                    </div>
+
+                    <div class="mb-3" th:if="${formBean.id == null}">
+                        <label for="idContrato" class="form-label fw-bold">Contrato *</label>
+                        <select id="idContrato" class="form-select" th:field="*{idContrato}" th:classappend="${#fields.hasErrors('idContrato')} ? 'is-invalid' : ''">
+                            <option value="">-- Seleccionar Contrato Activo --</option>
+                            <option th:each="c : ${contratosActivos}"
+                                    th:value="${c.id}"
+                                    th:text="${'Contrato #' + c.id + ' - ' + c.propiedad.direccion + ' - Inquilino: ' + c.inquilino.nombre + ' ' + c.inquilino.apellido}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('idContrato')}" th:errors="*{idContrato}"></div>
+                    </div>
+
+                    <div class="mb-3" th:if="${formBean.id != null}">
+                        <label class="form-label fw-bold">Contrato asociado</label>
+                        <input type="hidden" th:field="*{idContrato}"/>
+                        <input type="text" class="form-control text-muted" th:value="${'Contrato #' + formBean.idContrato}" readonly/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('idContrato')}" th:errors="*{idContrato}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="concepto" class="form-label fw-bold">Concepto *</label>
+                        <input type="text" id="concepto" class="form-control" th:field="*{concepto}" th:classappend="${#fields.hasErrors('concepto')} ? 'is-invalid' : ''"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('concepto')}" th:errors="*{concepto}"></div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="fechaEmision" class="form-label fw-bold">Fecha de emisión *</label>
+                            <input type="date" id="fechaEmision" class="form-control" th:field="*{fechaEmision}" th:classappend="${#fields.hasErrors('fechaEmision')} ? 'is-invalid' : ''"/>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaEmision')}" th:errors="*{fechaEmision}"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="fechaVencimiento" class="form-label fw-bold">Fecha de vencimiento *</label>
+                            <input type="date" id="fechaVencimiento" class="form-control" th:field="*{fechaVencimiento}" th:classappend="${#fields.hasErrors('fechaVencimiento')} ? 'is-invalid' : ''"/>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaVencimiento')}" th:errors="*{fechaVencimiento}"></div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="importe" class="form-label fw-bold">Importe *</label>
+                            <input type="number" step="0.01" min="0.01" id="importe" class="form-control" th:field="*{importe}" th:classappend="${#fields.hasErrors('importe')} ? 'is-invalid' : ''"/>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('importe')}" th:errors="*{importe}"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="estadoFactura" class="form-label fw-bold">Estado *</label>
+                            <select id="estadoFactura" class="form-select" th:field="*{estadoFactura}" th:classappend="${#fields.hasErrors('estadoFactura')} ? 'is-invalid' : ''">
+                                <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('estadoFactura')}" th:errors="*{estadoFactura}"></div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4 mb-3 border-bottom pb-2 fw-bold text-muted">Datos de pago</h4>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="fechaPago" class="form-label fw-bold">Fecha de pago</label>
+                            <input type="date" id="fechaPago" class="form-control" th:field="*{fechaPago}" th:classappend="${#fields.hasErrors('fechaPago')} ? 'is-invalid' : ''"/>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaPago')}" th:errors="*{fechaPago}"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="medioPago" class="form-label fw-bold">Medio de pago</label>
+                            <select id="medioPago" class="form-select" th:field="*{medioPago}" th:classappend="${#fields.hasErrors('medioPago')} ? 'is-invalid' : ''">
+                                <option value="">-- Seleccionar Medio --</option>
+                                <option th:each="m : ${allMediosPago}" th:value="${m}" th:text="${m}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('medioPago')}" th:errors="*{medioPago}"></div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="importePagado" class="form-label fw-bold">Importe pagado</label>
+                            <input type="number" step="0.01" min="0.01" id="importePagado" class="form-control" th:field="*{importePagado}" th:classappend="${#fields.hasErrors('importePagado')} ? 'is-invalid' : ''"/>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('importePagado')}" th:errors="*{importePagado}"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="interesPagado" class="form-label fw-bold">Interés pagado</label>
+                            <input type="number" step="0.01" min="0" id="interesPagado" class="form-control" th:field="*{interesPagado}" th:classappend="${#fields.hasErrors('interesPagado')} ? 'is-invalid' : ''"/>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('interesPagado')}" th:errors="*{interesPagado}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+                        <button type="submit" name="action" value="Cancelar" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" name="action" value="Aceptar" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <div class="mb-3" th:if="${formBean.id == null}">
-            <label class="form-label">Contrato *</label>
-            <select class="form-select" th:field="*{idContrato}">
-                <option value="">-- Seleccionar Contrato Activo --</option>
-                <option th:each="c : ${contratosActivos}"
-                        th:value="${c.id}"
-                        th:text="${'Contrato #' + c.id + ' - ' + c.propiedad.direccion + ' - Inquilino: ' + c.inquilino.nombre + ' ' + c.inquilino.apellido}"></option>
-            </select>
-            <span class="text-danger" th:if="${#fields.hasErrors('idContrato')}" th:errors="*{idContrato}"></span>
-        </div>
-
-        <div class="mb-3" th:if="${formBean.id != null}">
-            <label class="form-label">Contrato asociado</label>
-            <input type="hidden" th:field="*{idContrato}"/>
-            <input type="text" class="form-control" th:value="${'Contrato #' + formBean.idContrato}" readonly/>
-            <span class="text-danger" th:if="${#fields.hasErrors('idContrato')}" th:errors="*{idContrato}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Concepto *</label>
-            <input type="text" class="form-control" th:field="*{concepto}"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('concepto')}" th:errors="*{concepto}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Fecha de emision *</label>
-            <input type="date" class="form-control" th:field="*{fechaEmision}"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('fechaEmision')}" th:errors="*{fechaEmision}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Fecha de vencimiento *</label>
-            <input type="date" class="form-control" th:field="*{fechaVencimiento}"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('fechaVencimiento')}" th:errors="*{fechaVencimiento}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Importe *</label>
-            <input type="number" step="0.01" min="0.01" class="form-control" th:field="*{importe}"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('importe')}" th:errors="*{importe}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Estado *</label>
-            <select class="form-select" th:field="*{estadoFactura}">
-                <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
-            </select>
-            <span class="text-danger" th:if="${#fields.hasErrors('estadoFactura')}" th:errors="*{estadoFactura}"></span>
-        </div>
-
-        <h4 class="mt-4">Datos de pago</h4>
-
-        <div class="mb-3">
-            <label class="form-label">Fecha de pago</label>
-            <input type="date" class="form-control" th:field="*{fechaPago}"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('fechaPago')}" th:errors="*{fechaPago}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Medio de pago</label>
-            <select class="form-select" th:field="*{medioPago}">
-                <option value="">-- Seleccionar Medio --</option>
-                <option th:each="m : ${allMediosPago}" th:value="${m}" th:text="${m}"></option>
-            </select>
-            <span class="text-danger" th:if="${#fields.hasErrors('medioPago')}" th:errors="*{medioPago}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Importe pagado</label>
-            <input type="number" step="0.01" min="0.01" class="form-control" th:field="*{importePagado}"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('importePagado')}" th:errors="*{importePagado}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Interes pagado</label>
-            <input type="number" step="0.01" min="0" class="form-control" th:field="*{interesPagado}"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('interesPagado')}" th:errors="*{interesPagado}"></span>
-        </div>
-
-        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger mt-3">
-            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
-        </div>
-
-        <div class="mt-4">
-            <button type="submit" name="action" value="Aceptar" class="btn btn-primary">Guardar</button>
-            <button type="submit" name="action" value="Cancelar" class="btn btn-secondary">Cancelar</button>
-        </div>
-    </form>
+    </div>
 </div>
+
+<div th:replace="~{layout :: scripts}"></div>
 </body>
 </html>

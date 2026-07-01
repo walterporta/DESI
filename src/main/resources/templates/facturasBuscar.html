@@ -1,105 +1,120 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Buscar Facturas</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-</head>
+<head th:replace="~{layout :: header('HogarYa - Buscar Facturas')}"></head>
 <body>
-<div class="container mt-4">
+
+<div th:replace="~{layout :: navbar}"></div>
+
+<div class="container my-4">
     <h2>Listado de Facturas</h2>
 
     <div th:if="${errorEliminar}" class="alert alert-danger" th:text="${errorEliminar}"></div>
 
-    <form th:action="@{/facturasBuscar}" method="get" th:object="${filterBean}" class="row g-2 mb-4">
-        <div class="col-md-2">
-            <select class="form-select" th:field="*{idContrato}">
-                <option value="">-- Contrato --</option>
-                <option th:each="c : ${allContratos}"
-                        th:value="${c.id}"
-                        th:text="${'Contrato #' + c.id + ' - ' + c.propiedad.direccion}"></option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <select class="form-select" th:field="*{idPropiedad}">
-                <option value="">-- Propiedad --</option>
-                <option th:each="p : ${allPropiedades}"
-                        th:value="${p.id}"
-                        th:text="${p.direccion + ' (' + p.ciudad + ')'}"></option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <select class="form-select" th:field="*{idInquilino}">
-                <option value="">-- Inquilino --</option>
-                <option th:each="i : ${allInquilinos}"
-                        th:value="${i.id}"
-                        th:text="${i.nombre + ' ' + i.apellido}"></option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <select class="form-select" th:field="*{estado}">
-                <option value="">-- Estado --</option>
-                <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <input type="date" class="form-control" th:field="*{vencimientoDesde}" title="Vencimiento desde"/>
-        </div>
-        <div class="col-md-2">
-            <input type="date" class="form-control" th:field="*{vencimientoHasta}" title="Vencimiento hasta"/>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-        </div>
-    </form>
+    <!-- Filtros de Búsqueda -->
+    <div class="card p-4 mb-4">
+        <form th:action="@{/facturasBuscar}" method="get" th:object="${filterBean}" class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label for="idContrato" class="form-label fw-bold">Contrato</label>
+                <select id="idContrato" class="form-select" th:field="*{idContrato}">
+                    <option value="">-- Contrato --</option>
+                    <option th:each="c : ${allContratos}"
+                            th:value="${c.id}"
+                            th:text="${'Contrato #' + c.id + ' - ' + c.propiedad.direccion}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="idPropiedad" class="form-label fw-bold">Propiedad</label>
+                <select id="idPropiedad" class="form-select" th:field="*{idPropiedad}">
+                    <option value="">-- Propiedad --</option>
+                    <option th:each="p : ${allPropiedades}"
+                            th:value="${p.id}"
+                            th:text="${p.direccion + ' (' + p.ciudad + ')'}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="idInquilino" class="form-label fw-bold">Inquilino</label>
+                <select id="idInquilino" class="form-select" th:field="*{idInquilino}">
+                    <option value="">-- Inquilino --</option>
+                    <option th:each="i : ${allInquilinos}"
+                            th:value="${i.id}"
+                            th:text="${i.nombre + ' ' + i.apellido}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="estado" class="form-label fw-bold">Estado</label>
+                <select id="estado" class="form-select" th:field="*{estado}">
+                    <option value="">-- Estado --</option>
+                    <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="vencimientoDesde" class="form-label fw-bold">Venc. Desde</label>
+                <input type="date" id="vencimientoDesde" class="form-control" th:field="*{vencimientoDesde}"/>
+            </div>
+            <div class="col-md-2">
+                <label for="vencimientoHasta" class="form-label fw-bold">Venc. Hasta</label>
+                <input type="date" id="vencimientoHasta" class="form-control" th:field="*{vencimientoHasta}"/>
+            </div>
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary px-4">Filtrar</button>
+            </div>
+        </form>
+    </div>
 
-    <a th:href="@{/facturasEditar}" class="btn btn-success mb-3">+ Nueva Factura</a>
-    <a th:href="@{/}" class="btn btn-secondary mb-3">Menu</a>
+    <!-- Botones de Acción -->
+    <div class="mb-3">
+        <a th:href="@{/facturasEditar}" class="btn btn-success">+ Nueva Factura</a>
+    </div>
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Contrato</th>
-                <th>Propiedad</th>
-                <th>Inquilino</th>
-                <th>Emision</th>
-                <th>Vencimiento</th>
-                <th>Importe</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="f : ${facturas}">
-                <td th:text="${f.id}"></td>
-                <td th:text="${'Contrato #' + f.contrato.id}"></td>
-                <td th:text="${f.contrato.propiedad.direccion + ' (' + f.contrato.propiedad.ciudad + ')'}"></td>
-                <td th:text="${f.contrato.inquilino.nombre + ' ' + f.contrato.inquilino.apellido}"></td>
-                <td th:text="${f.fechaEmision}"></td>
-                <td th:text="${f.fechaVencimiento}"></td>
-                <td th:text="${'$' + f.importe}"></td>
-                <td>
-                    <span class="badge"
-                          th:classappend="${f.estadoFactura.name() == 'PENDIENTE' ? 'bg-warning text-dark' :
-                                           (f.estadoFactura.name() == 'PAGADA' ? 'bg-success' :
-                                           (f.estadoFactura.name() == 'VENCIDA' ? 'bg-danger' : 'bg-secondary'))}"
-                          th:text="${f.estadoFactura}">
-                    </span>
-                </td>
-                <td>
-                    <a th:href="@{/facturasEditar/{id}(id=${f.id})}" class="btn btn-sm btn-warning">Editar</a>
-                    <form th:action="@{/facturasEditar/delete/{id}(id=${f.id})}" method="post" style="display:inline">
-                        <button type="submit" class="btn btn-sm btn-danger"
-                                onclick="return confirm('Eliminar esta factura?')">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(facturas)}">
-                <td colspan="9" class="text-center">No se encontraron facturas registradas</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Tabla -->
+    <div class="table-container">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Contrato</th>
+                    <th>Propiedad</th>
+                    <th>Inquilino</th>
+                    <th>Emisión</th>
+                    <th>Vencimiento</th>
+                    <th>Importe</th>
+                    <th>Estado</th>
+                    <th class="text-end" style="width: 180px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="f : ${facturas}">
+                    <td th:text="${f.id}"></td>
+                    <td th:text="${'Contrato #' + f.contrato.id}"></td>
+                    <td th:text="${f.contrato.propiedad.direccion + ' (' + f.contrato.propiedad.ciudad + ')'}"></td>
+                    <td th:text="${f.contrato.inquilino.nombre + ' ' + f.contrato.inquilino.apellido}"></td>
+                    <td th:text="${f.fechaEmision}"></td>
+                    <td th:text="${f.fechaVencimiento}"></td>
+                    <td th:text="${'$' + f.importe}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${f.estadoFactura.name() == 'PENDIENTE' ? 'bg-warning text-dark' :
+                                               (f.estadoFactura.name() == 'PAGADA' ? 'bg-success' :
+                                               (f.estadoFactura.name() == 'VENCIDA' ? 'bg-danger' : 'bg-secondary'))}"
+                              th:text="${f.estadoFactura}">
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <a th:href="@{/facturasEditar/{id}(id=${f.id})}" class="btn btn-sm btn-warning me-2">Editar</a>
+                        <form th:action="@{/facturasEditar/delete/{id}(id=${f.id})}" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('¿Eliminar esta factura?')">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(facturas)}">
+                    <td colspan="9" class="text-center text-muted">No se encontraron facturas registradas</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<div th:replace="~{layout :: scripts}"></div>
 </body>
 </html>

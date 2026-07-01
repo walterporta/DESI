@@ -1,0 +1,176 @@
+Trabajo Práctico 3 – Desarrollo de Sistemas de Información
+============================================================
+
+Integrantes del equipo:
+-----------------------
+- Ortega, Nicolas (DNI: 37.685.367)
+  Historia de usuario: Epic 1 ABMC de Propiedades
+
+- Golubenko, Gustavo (DNI: 28.325.421)
+  Historia de usuario: Epic 2 ABMC de Publicaciones
+
+- Porta, Walter (DNI: 34.114.804)
+  Historia de usuario: Epic 3 ABMC de Contratos
+
+- Diaz Mendivil, Facundo (DNI: 44.595.930)
+  Historia de usuario: Epic 4 ABMC de Facturas
+
+Repositorio GitHub:
+-------------------
+- URI del repositorio: https://github.com/walterporta/DESI
+- Branch a corregir: Dev
+
+============================================================
+EPIC 1: ABMC de Propiedades
+============================================================
+Autor/responsable: Nicolas Ortega (DNI: 37.685.367).
+
+Incluye:
+- Alta de propiedad (inmueble) asociada a un propietario (Persona) y una ciudad (Ciudad).
+- Modificacion de propiedades (datos físicos, descripción, tipo y estado de disponibilidad).
+- Eliminacion logica de propiedades.
+- Listado y filtros de busqueda por direccion, ciudad, tipo de propiedad y estado de disponibilidad.
+- Registro de historial de cambios de estado de disponibilidad de la propiedad.
+
+Reglas principales implementadas:
+- No se permite duplicar una propiedad con la misma dirección y ciudad en el sistema (para propiedades activas).
+- No se puede cambiar el estado de disponibilidad de una propiedad a "DISPONIBLE" o "INACTIVA" si posee un contrato activo y vigente.
+- No se puede eliminar una propiedad que tenga un contrato activo y vigente.
+- Estados de disponibilidad permitidos:
+  * DISPONIBLE
+  * ALQUILADA
+  * INACTIVA
+
+Archivos principales:
+- entidades/Propiedad.java
+- entidades/EstadoDisponibilidad.java
+- entidades/TipoPropiedad.java
+- entidades/HistorialEstadoPropiedad.java
+- accesoDatos/IPropiedadRepo.java
+- servicios/PropiedadService.java
+- servicios/PropiedadServiceImpl.java
+- presentacion/propiedades/PropiedadForm.java
+- presentacion/propiedades/PropiedadesBuscarForm.java
+- presentacion/propiedades/PropiedadesBuscarController.java
+- presentacion/propiedades/PropiedadesEditarController.java
+- templates/propiedadesBuscar.html
+- templates/propiedadesEditar.html
+
+============================================================
+EPIC 2: ABMC de Publicaciones
+============================================================
+Autor/responsable: Gustavo Golubenko (DNI: 28.325.421).
+
+Incluye:
+- Alta de publicacion asociada a una propiedad activa y no eliminada.
+- Modificacion de publicaciones (precio mensual, condiciones contractuales y descripcion).
+- Eliminacion logica de publicaciones.
+- Listado y filtros de busqueda por propiedad, ciudad, estado de la publicacion y rango de precio mensual (minimo y maximo).
+- Registro de historial de cambios de estado de la publicacion.
+
+Reglas principales implementadas:
+- Solo se pueden publicar propiedades que se encuentren en estado de disponibilidad "DISPONIBLE" y no esten eliminadas.
+- No puede existir mas de una publicacion en estado "ACTIVA" para una misma propiedad de forma simultanea.
+- Las condiciones de alquiler solo se pueden modificar si la publicacion NO esta en estado "FINALIZADA".
+- No se puede modificar una publicacion para dejarla activa si ya existe otra publicacion activa para el mismo inmueble.
+- Solo se permite la eliminacion logica de publicaciones que se encuentren en estado "ACTIVA".
+- Estados de publicacion permitidos:
+  * ACTIVA
+  * PAUSADA
+  * FINALIZADA
+
+Archivos principales:
+- entidades/Publicacion.java
+- entidades/EstadoPublicacion.java
+- entidades/HistorialEstadoPublicacion.java
+- accesoDatos/IPublicacionRepo.java
+- servicios/PublicacionService.java
+- servicios/PublicacionServiceImpl.java
+- presentacion/publicaciones/PublicacionForm.java
+- presentacion/publicaciones/PublicacionesBuscarForm.java
+- presentacion/publicaciones/PublicacionesBuscarController.java
+- presentacion/publicaciones/PublicacionesRegistrarController.java
+- templates/publicacionesBuscar.html
+- templates/publicacionesRegistrar.html
+
+============================================================
+EPIC 3: ABMC de Contratos
+============================================================
+Autor/responsable: Walter Porta (DNI: 34.114.804).
+
+Incluye:
+- Alta de contrato asociado a una propiedad (inmueble) y un inquilino (Persona).
+- Modificacion de contratos respetando reglas del ciclo de vida y transiciones de estado.
+- Eliminacion logica de contratos.
+- Listado y filtros de busqueda por propiedad, inquilino, estado del contrato y fecha de inicio.
+- Registro de historial de cambios de estado del contrato.
+
+Reglas principales implementadas:
+- Calculo automatico de la fecha de finalizacion sumando la duracion en meses a la fecha de inicio del contrato.
+- Validaciones de valores de entrada: importe mensual y duracion en meses positivos, y dia de vencimiento mensual en el rango [1, 31].
+- Al pasar un contrato a estado "ACTIVO" (ya sea nuevo o modificando un borrador):
+  * Se verifica que la propiedad este "DISPONIBLE" y no tenga otro contrato activo.
+  * Se actualiza automaticamente el estado de la propiedad a "ALQUILADA".
+- Al pasar un contrato de "ACTIVO" a "FINALIZADO" o "RESCINDIDO":
+  * Se actualiza automaticamente el estado de la propiedad a "DISPONIBLE".
+- No se permiten transiciones inversas desde estados finales (no se puede volver a pasar un contrato "FINALIZADO" o "RESCINDIDO" a "ACTIVO" o "BORRADOR").
+- Solo se permite la eliminacion logica de contratos que se encuentren en estado "BORRADOR".
+- Estados de contrato permitidos:
+  * BORRADOR
+  * ACTIVO
+  * FINALIZADO
+  * RESCINDIDO
+
+Archivos principales:
+- entidades/Contrato.java
+- entidades/EstadoContrato.java
+- entidades/HistorialEstadoContrato.java
+- accesoDatos/IContratoRepo.java
+- servicios/ContratoService.java
+- servicios/ContratoServiceImpl.java
+- presentacion/contrato/ContratoForm.java
+- presentacion/contrato/ContratosBuscarForm.java
+- presentacion/contrato/ContratosBuscarController.java
+- presentacion/contrato/ContratosEditarController.java
+- templates/contratosBuscar.html
+- templates/contratosEditar.html
+
+============================================================
+EPIC 4: ABMC de Facturas
+============================================================
+Autor/responsable: Facundo Diaz Mendivil (DNI: 44.595.930).
+
+Incluye:
+- Alta de factura asociada a un contrato activo y no eliminado.
+- Modificacion de factura respetando reglas de negocio.
+- Eliminacion logica de factura.
+- Listado y filtros por contrato, propiedad, inquilino, estado y rango de vencimiento.
+- Registro de historial de cambios de estado de la factura.
+
+Reglas principales implementadas:
+- El contrato asociado no se puede cambiar una vez creada la factura.
+- Solo se facturan contratos activos.
+- No se puede modificar una factura pagada o anulada.
+- No se puede eliminar una factura pagada.
+- Estados permitidos:
+  * PENDIENTE -> PAGADA
+  * PENDIENTE -> VENCIDA
+  * PENDIENTE -> ANULADA
+  * VENCIDA -> PAGADA
+- Para marcar como pagada se deben cargar fecha de pago, medio de pago e importe pagado.
+- Si la factura no esta pagada, los datos de pago deben quedar vacios.
+
+Archivos principales:
+- entidades/Factura.java
+- entidades/EstadoFactura.java
+- entidades/MedioPago.java
+- entidades/HistorialEstadoFactura.java
+- accesoDatos/IFacturaRepo.java
+- servicios/FacturaService.java
+- servicios/FacturaServiceImpl.java
+- presentacion/facturas/FacturaForm.java
+- presentacion/facturas/FacturasBuscarForm.java
+- presentacion/facturas/FacturasBuscarController.java
+- presentacion/facturas/FacturasEditarController.java
+- templates/facturasBuscar.html
+- templates/facturasEditar.html

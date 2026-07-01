@@ -1,31 +1,105 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Menú Principal</title>
-    <link rel="stylesheet" th:href="@{/css/main.css}" />
-</head>
-
+<head th:replace="~{layout :: header('HogarYa - Gestión Inmobiliaria')}"></head>
 <body>
-    <div class="starter-template">
-        <h1>Sistema de Gestion Inmobiliaria </h1>
-        <h2>
-            <span th:text="'Bienvenido'"></span>
-        </h2>
+
+<div th:replace="~{layout :: navbar}"></div>
+
+<div class="container my-5">
+    <div class="row mb-5 text-center">
+        <div class="col-md-8 mx-auto">
+            <h1 class="display-4 fw-bold text-dark mb-3">Sistema de Gestión Inmobiliaria</h1>
+            <p class="lead text-muted">Bienvenido al panel central de HogarYa. Seleccione una de las siguientes secciones para gestionar los recursos del sistema.</p>
+        </div>
     </div>
 
+    <div class="row g-4 justify-content-center">
+        <!-- Provincias -->
+        <div class="col-md-4">
+            <div class="card h-100 p-3 text-center">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-map text-primary fs-1 mb-3"></i>
+                    <h3 class="card-title fw-bold">Provincias</h3>
+                    <p class="card-text text-muted">Administración y registro de provincias del país.</p>
+                    <a th:href="@{/provinciasBuscar}" class="btn btn-outline-primary mt-auto w-100">Entrar</a>
+                </div>
+            </div>
+        </div>
 
-    <div class="menu">
-        <a th:href="@{/provinciasBuscar}">Provincias</a>
-        <a th:href="@{/ciudadesBuscar}">Ciudades</a>
-        <a th:href="@{/personasBuscar}">Personas</a>
-        <a th:href="@{/publicacionesBuscar}">Publicaciones</a>
-        <a th:href="@{/propiedadesBuscar}">Propiedades</a>
-        <a th:href="@{/contratosBuscar}">Contratos</a>
-        <a th:href="@{/facturasBuscar}">Facturas</a>
+        <!-- Ciudades -->
+        <div class="col-md-4">
+            <div class="card h-100 p-3 text-center">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-building text-success fs-1 mb-3"></i>
+                    <h3 class="card-title fw-bold">Ciudades</h3>
+                    <p class="card-text text-muted">Gestión de ciudades asociadas a cada provincia.</p>
+                    <a th:href="@{/ciudadesBuscar}" class="btn btn-outline-success mt-auto w-100">Entrar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personas -->
+        <div class="col-md-4">
+            <div class="card h-100 p-3 text-center">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-people text-warning fs-1 mb-3"></i>
+                    <h3 class="card-title fw-bold">Personas</h3>
+                    <p class="card-text text-muted">Gestión de propietarios, inquilinos y clientes.</p>
+                    <a th:href="@{/personasBuscar}" class="btn btn-outline-warning mt-auto w-100">Entrar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Propiedades -->
+        <div class="col-md-4">
+            <div class="card h-100 p-3 text-center">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-house-door text-danger fs-1 mb-3"></i>
+                    <h3 class="card-title fw-bold">Propiedades</h3>
+                    <p class="card-text text-muted">Alta, baja y listado de propiedades para alquiler o venta.</p>
+                    <a th:href="@{/propiedadesBuscar}" class="btn btn-outline-danger mt-auto w-100">Entrar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contratos -->
+        <div class="col-md-4">
+            <div class="card h-100 p-3 text-center">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-file-earmark-ruled text-info fs-1 mb-3"></i>
+                    <h3 class="card-title fw-bold">Contratos</h3>
+                    <p class="card-text text-muted">Gestión y control de alquileres y firmas de contratos.</p>
+                    <a th:href="@{/contratosBuscar}" class="btn btn-outline-info mt-auto w-100">Entrar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Publicaciones -->
+        <div class="col-md-4">
+            <div class="card h-100 p-3 text-center">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-journal-bookmark text-secondary fs-1 mb-3"></i>
+                    <h3 class="card-title fw-bold">Publicaciones</h3>
+                    <p class="card-text text-muted">Gestión de publicaciones de propiedades en alquiler.</p>
+                    <a th:href="@{/publicacionesBuscar}" class="btn btn-outline-secondary mt-auto w-100">Entrar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Facturas -->
+        <div class="col-md-4">
+            <div class="card h-100 p-3 text-center">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-receipt text-dark fs-1 mb-3"></i>
+                    <h3 class="card-title fw-bold">Facturas</h3>
+                    <p class="card-text text-muted">Gestión y control de facturas de alquileres.</p>
+                    <a th:href="@{/facturasBuscar}" class="btn btn-outline-dark mt-auto w-100">Entrar</a>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
+<div th:replace="~{layout :: scripts}"></div>
 </body>
-
 </html>

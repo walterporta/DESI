@@ -1,91 +1,102 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Editar Propiedad</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-</head>
+<head th:replace="~{layout :: header(${formBean.id == null ? 'Nueva Propiedad' : 'Editar Propiedad'})}"></head>
 <body>
-<div class="container mt-4">
-    <h2 th:text="${formBean.id == null ? 'Nueva Propiedad' : 'Editar Propiedad'}"></h2>
 
-    <form th:action="@{/propiedadesEditar}" method="post" th:object="${formBean}">
+<div th:replace="~{layout :: navbar}"></div>
 
-        <!-- ID (solo lectura si es edición) -->
-        <input type="hidden" th:field="*{id}"/>
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <h2 class="fw-bold mb-3 text-center" th:text="${formBean.id == null ? 'Nueva Propiedad' : 'Editar Propiedad'}"></h2>
+                <p class="text-muted text-center mb-4">Complete la información de la propiedad a continuación.</p>
 
-        <div class="mb-3">
-            <label class="form-label">ID</label>
-            <input type="text" class="form-control" th:value="${formBean.id == null ? 'Se asignará automáticamente' : formBean.id}" readonly/>
+                <form th:action="@{/propiedadesEditar}" method="post" th:object="${formBean}">
+                    <!-- Errores globales -->
+                    <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger mb-3">
+                        <p th:each="err : ${#fields.globalErrors()}" th:text="${err}" class="mb-0"></p>
+                    </div>
+
+                    <!-- ID (solo lectura si es edición) -->
+                    <input type="hidden" th:field="*{id}"/>
+
+                    <div class="mb-3" th:if="${formBean.id != null}">
+                        <label class="form-label fw-bold">ID Propiedad</label>
+                        <input type="text" class="form-control text-muted" th:value="${formBean.id}" readonly/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="direccion" class="form-label fw-bold">Dirección *</label>
+                        <input type="text" id="direccion" class="form-control" th:field="*{direccion}" th:classappend="${#fields.hasErrors('direccion')} ? 'is-invalid' : ''" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ciudad" class="form-label fw-bold">Ciudad *</label>
+                        <input type="text" id="ciudad" class="form-control" th:field="*{ciudad}" th:classappend="${#fields.hasErrors('ciudad')} ? 'is-invalid' : ''" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('ciudad')}" th:errors="*{ciudad}"></div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="tipo" class="form-label fw-bold">Tipo de Propiedad *</label>
+                            <select id="tipo" class="form-select" th:field="*{tipo}" th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid' : ''">
+                                <option value="">-- Seleccionar --</option>
+                                <option th:each="t : ${allTipos}" th:value="${t}" th:text="${t}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="cantidadAmbientes" class="form-label fw-bold">Ambientes *</label>
+                            <input type="number" id="cantidadAmbientes" class="form-control" th:field="*{cantidadAmbientes}" min="1" th:classappend="${#fields.hasErrors('cantidadAmbientes')} ? 'is-invalid' : ''" />
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('cantidadAmbientes')}" th:errors="*{cantidadAmbientes}"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="metrosCuadrados" class="form-label fw-bold">M² *</label>
+                            <input type="number" step="0.01" id="metrosCuadrados" class="form-control" th:field="*{metrosCuadrados}" min="0.01" th:classappend="${#fields.hasErrors('metrosCuadrados')} ? 'is-invalid' : ''" />
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('metrosCuadrados')}" th:errors="*{metrosCuadrados}"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label fw-bold">Descripción *</label>
+                        <textarea id="descripcion" class="form-control" th:field="*{descripcion}" rows="3" th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''"></textarea>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="estadoDisponibilidad" class="form-label fw-bold">Estado de Disponibilidad *</label>
+                        <select id="estadoDisponibilidad" class="form-select" th:field="*{estadoDisponibilidad}" th:classappend="${#fields.hasErrors('estadoDisponibilidad')} ? 'is-invalid' : ''">
+                            <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('estadoDisponibilidad')}" th:errors="*{estadoDisponibilidad}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="idPropietario" class="form-label fw-bold">Propietario *</label>
+                        <select id="idPropietario" class="form-select" th:field="*{idPropietario}" th:classappend="${#fields.hasErrors('idPropietario')} ? 'is-invalid' : ''">
+                            <option value="">-- Seleccionar propietario --</option>
+                            <option th:each="persona : ${allPropietarios}"
+                                    th:value="${persona.id}"
+                                    th:text="${persona.nombre + ' ' + persona.apellido + ' - ' + persona.dniCuit}">
+                            </option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('idPropietario')}" th:errors="*{idPropietario}"></div>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+                        <button type="submit" name="action" value="Cancelar" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" name="action" value="Aceptar" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Dirección *</label>
-            <input type="text" class="form-control" th:field="*{direccion}"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Ciudad *</label>
-            <input type="text" class="form-control" th:field="*{ciudad}"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('ciudad')}" th:errors="*{ciudad}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Tipo de Propiedad *</label>
-            <select class="form-select" th:field="*{tipo}">
-                <option value="">-- Seleccionar --</option>
-                <option th:each="t : ${allTipos}" th:value="${t}" th:text="${t}"></option>
-            </select>
-            <span class="text-danger" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Cantidad de Ambientes *</label>
-            <input type="number" class="form-control" th:field="*{cantidadAmbientes}" min="1"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('cantidadAmbientes')}" th:errors="*{cantidadAmbientes}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Metros Cuadrados *</label>
-            <input type="number" step="0.01" class="form-control" th:field="*{metrosCuadrados}" min="0.01"/>
-            <span class="text-danger" th:if="${#fields.hasErrors('metrosCuadrados')}" th:errors="*{metrosCuadrados}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Descripción *</label>
-            <textarea class="form-control" th:field="*{descripcion}" rows="3"></textarea>
-            <span class="text-danger" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Estado de Disponibilidad *</label>
-            <select class="form-select" th:field="*{estadoDisponibilidad}">
-                <option th:each="e : ${allEstados}" th:value="${e}" th:text="${e}"></option>
-            </select>
-            <span class="text-danger" th:if="${#fields.hasErrors('estadoDisponibilidad')}" th:errors="*{estadoDisponibilidad}"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Propietario *</label>
-            <select class="form-select" th:field="*{idPropietario}">
-                <option value="">-- Seleccionar propietario --</option>
-                <option th:each="persona : ${allPropietarios}"
-                        th:value="${persona.id}"
-                        th:text="${persona.nombre + ' ' + persona.apellido + ' - ' + persona.dniCuit}">
-                </option>
-            </select>
-            <span class="text-danger" th:if="${#fields.hasErrors('idPropietario')}" th:errors="*{idPropietario}"></span>
-        </div>
-
-        <!-- Errores globales -->
-        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
-            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
-        </div>
-
-        <button type="submit" name="action" value="Aceptar" class="btn btn-primary">Guardar</button>
-        <button type="submit" name="action" value="Cancelar" class="btn btn-secondary">Cancelar</button>
-    </form>
+    </div>
 </div>
+
+<div th:replace="~{layout :: scripts}"></div>
 </body>
 </html>
