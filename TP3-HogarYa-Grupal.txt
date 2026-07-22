@@ -3,22 +3,22 @@ Trabajo Práctico 3 – Desarrollo de Sistemas de Información
 
 Integrantes del equipo:
 -----------------------
-- Ortega, Nicolas (DNI: 37.685.367)
+- Ortega, Nicolas (DNI: 37.685.367) nicolas.ortega@frsf.utn.edu.ar
   Historia de usuario: Epic 1 ABMC de Propiedades
 
-- Golubenko, Gustavo (DNI: 28.325.421)
+- Golubenko, Gustavo (DNI: 28.325.421) ggolubenko@frsf.utn.edu.ar
   Historia de usuario: Epic 2 ABMC de Publicaciones
 
-- Porta, Walter (DNI: 34.114.804)
+- Porta, Walter (DNI: 34.114.804) walter.porta@frsf.utn.edu.ar
   Historia de usuario: Epic 3 ABMC de Contratos
 
-- Diaz Mendivil, Facundo (DNI: 44.595.930)
+- Diaz Mendivil, Facundo (DNI: 44.595.930) fdiazmendivil@frsf.utn.edu.ar
   Historia de usuario: Epic 4 ABMC de Facturas
 
 Repositorio GitHub:
 -------------------
 - URI del repositorio: https://github.com/walterporta/DESI
-- Branch a corregir: Dev
+- Branch a corregir: dev
 
 ============================================================
 EPIC 1: ABMC de Propiedades
